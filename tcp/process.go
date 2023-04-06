@@ -36,26 +36,32 @@ func (s *Server) process(conn net.Conn) {
 	}
 }
 func (s *Server) set(conn net.Conn, r *bufio.Reader) error {
+	// 从 conn 中读取 kv ，若 key 不属于本 node 会报错
 	key, val, err := s.readKeyAndValue(r)
 	if err != nil {
 		return sendResponse(nil, err, conn)
 	}
+	// 保存 kv
 	err = s.Set(key, val)
 	return sendResponse(nil, err, conn)
 }
 func (s *Server) get(conn net.Conn, r *bufio.Reader) error {
+	// 从 conn 中读取 key ，若 key 不属于本 node 会报错
 	key, err := s.readKey(r)
 	if err != nil {
 		return sendResponse(nil, err, conn)
 	}
+	// 读取 kv
 	val, err := s.Get(key)
 	return sendResponse(val, err, conn)
 }
 func (s *Server) del(conn net.Conn, r *bufio.Reader) error {
+	// 从 conn 中读取 key ，若 key 不属于本 node 会报错
 	key, err := s.readKey(r)
 	if err != nil {
 		return sendResponse(nil, err, conn)
 	}
+	// 删除 kv
 	err = s.Del(key)
 	return sendResponse(nil, err, conn)
 }

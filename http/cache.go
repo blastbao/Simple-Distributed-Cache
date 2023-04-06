@@ -7,6 +7,7 @@ import (
 	"strings"
 )
 
+// 负责 Set/Get/Delete Cache
 type cacheHandler struct {
 	*Server
 }

@@ -1,20 +1,21 @@
 package cluster
 
 import (
-	"github.com/hashicorp/memberlist"
 	"io/ioutil"
-	"stathat.com/c/consistent"
 	"time"
+
+	"github.com/hashicorp/memberlist"
+	"stathat.com/c/consistent"
 )
 
 type Node interface {
-	ShouldProcess(key string) (string, bool)
+	ShouldProcess(key string) (string, bool) // 获取 key 归属的 node 地址
 	Members() []string //该函数被consistent实现
 	Addr() string
 }
 type node struct {
-	*consistent.Consistent
-	addr string
+	*consistent.Consistent // 集群 nodes 映射的 hash 环，定时(1s)更新
+	addr string	// 本机地址
 }
 
 func New(addr, cluster string) (Node, error) {
@@ -57,6 +58,7 @@ func New(addr, cluster string) (Node, error) {
 
 }
 
+// ShouldProcess 获取 key 归属的 node 地址，以及其是否属于本 node
 func (n *node) ShouldProcess(key string) (string, bool) {
 	addr, _ := n.Get(key)
 	return addr, addr == n.addr

@@ -12,7 +12,10 @@ import (
 func main() {
 	log.SetFlags(log.Lshortfile | log.Lmicroseconds | log.Ldate)
 
+
+	// 本机地址
 	nodeAddr := flag.String("n", "127.0.0.1", "nodeAddr address")
+	// 集群地址
 	cls := flag.String("c", "", "cluster address")
 
 	flag.Parse()
@@ -20,6 +23,7 @@ func main() {
 	log.Println("[nodeAddr] is", *nodeAddr)
 	log.Println("[cluster] is", *cls)
 
+	//
 	node, err := cluster.New(*nodeAddr, *cls)
 	if err != nil {
 		panic(err)

@@ -52,10 +52,13 @@ func (s *Server) readKeyAndValue(r *bufio.Reader) (string, []byte, error) {
 	if err != nil {
 		return "", nil, err
 	}
+
+	// 若 key 不属于本 node 则报错
 	jumpAddr, ok := s.ShouldProcess(string(key))
 	if !ok {
 		return "", nil, errors.New("redirect " + jumpAddr)
 	}
+
 	val := make([]byte, valLen)
 	_, err = io.ReadFull(r, val)
 	if err != nil {
