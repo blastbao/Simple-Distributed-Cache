@@ -11,6 +11,7 @@ type pair struct {
 	k string
 	v []byte
 }
+
 type inMemoryScanner struct {
 	pair
 	pairCh  chan *pair
@@ -37,22 +38,4 @@ func (s *inMemoryScanner) Value() []byte {
 	return s.v
 }
 
-func (c *inMemoryCache) NewScanner() Scanner {
-	pairCh := make(chan *pair)
-	closeCh := make(chan struct{})
-	go func() {
-		defer close(pairCh)
-		c.mutex.RLock()
-		for k, v := range c.cacheMap {
-			c.mutex.RUnlock()
-			select {
-			case <-closeCh:
-				return
-			case pairCh <- &pair{k, v}:
-			}
-			c.mutex.RLock()
-		}
-		c.mutex.RUnlock()
-	}()
-	return &inMemoryScanner{pair{}, pairCh, closeCh}
-}
+
